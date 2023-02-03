@@ -114,7 +114,7 @@ app.post('/api/get_widget_url/:userGuid', async function (request, response) {
         ui_message_version: 4,
         widget_type: 'connect_widget',
         // TODO: here we can change the widget theme
-        color_scheme: 'dark',
+        // color_scheme: 'dark',
 
       }
     }
