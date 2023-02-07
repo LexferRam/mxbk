@@ -104,9 +104,10 @@ app.get('/api/createUser', async function (request, response) {
 })
 
 // get widget_url LEXFER
-app.post('/api/get_widget_url/:userGuid', async function (request, response) {
+app.post('/api/get_widget_url/:userGuid/:theme', async function (request, response) {
   try {
     let userGuid = request.params.userGuid
+    let userTheme = request.params.theme
 
     const widgetRequestBody = {
       widget_url: {
@@ -115,9 +116,7 @@ app.post('/api/get_widget_url/:userGuid', async function (request, response) {
         mode: 'verification',
         ui_message_version: 4,
         widget_type: 'connect_widget',
-        // TODO: here we can change the widget theme
-        // color_scheme: 'dark',
-
+        color_scheme: userTheme
       }
     }
 
