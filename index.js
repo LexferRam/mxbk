@@ -113,7 +113,7 @@ app.post('/api/get_widget_url/:userGuid/:theme', async function (request, respon
       widget_url: {
         include_transactions: true,
         is_mobile_webview: false,
-        mode: 'verification',
+        mode: 'aggregation',
         ui_message_version: 4,
         widget_type: 'connect_widget',
         color_scheme: userTheme
