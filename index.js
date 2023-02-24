@@ -29,8 +29,8 @@ const configuration = new Configuration({
 
   baseOptions: {
     headers: {
-      Accept: 'application/vnd.mx.api.v1+json',
-      // TODO: here we can change the widget language 
+      Accept: 'application/vnd.mx.api.v1+json'
+      // TODO: here we can change the widget language
       // 'Accept-Language': 'es' //en-US
     }
   }
@@ -41,6 +41,7 @@ const client = new MxPlatformApi(configuration)
 app.get('/api/users', async function (_request, response) {
   try {
     const listUsersResponse = await client.listUsers()
+    client.deleteManagedAccount()
     response.json(listUsersResponse.data)
   } catch (e) {
     logAndReturnApiError('listUserAccounts', e, response)
@@ -206,17 +207,58 @@ app.post('/users/:userGuid/members/:memberGuid/identify', async function (reques
   }
 })
 
-app.get('/users/:userGuid/members/:memberGuid/transactions', async function (request, response) {
+// TODO: TRANSACCIONES POR USER/CUENTA
+app.post('/users/:userGuid/account/:accountGuid/transactions', async function (request, response) {
   try {
-    const listTransactionsResponse = await client.listTransactionsByMember(
-      request.params.memberGuid,
+    const listTransactionsResponse = await client.listTransactionsByAccount(
+      request.params.accountGuid,
       request.params.userGuid
     )
     response.json(listTransactionsResponse.data)
   } catch (e) {
-    logAndReturnApiError('listTransactionsByMember', e, response)
+    logAndReturnApiError('listTransactionsByAccount', e, response)
   }
 })
+
+// TODO: ELIMINAR UNA FI DE UN USUARIO
+app.delete('/users/:userGuid/member/:memberGuid/deletemember', async function (request, response) {
+  try {
+    const resp = await client.deleteMember(
+      // request.params.accountGuid,
+      request.params.memberGuid,
+      request.params.userGuid
+    )
+    response.json(resp)
+  } catch (e) {
+    logAndReturnApiError('deleteMember', e, response)
+  }
+})
+
+// TODO: ELIMINAR UNA CUENTA DE UN FI QUE PERTENECE A UN USUARIO
+// https://docs.mx.com/api   ===> Delete a managed account
+// Error when calling MxPlatformApi->deleteManagedAccount: HTTP 403 Forbidden
+// {
+//   error: {
+//     message: 'Client does not have access to managed member features',
+//     status: 'forbidden',
+//     type: 'missing_platform_api_permission'
+//   }
+// }
+app.delete(
+  '/users/:userGuid/member/:memberGuid/account/:accountGuid/deleteManagedAccount',
+  async function (request, response) {
+    try {
+      const resp = await client.deleteManagedAccount(
+        request.params.accountGuid,
+        request.params.memberGuid,
+        request.params.userGuid
+      )
+      response.json(resp)
+    } catch (e) {
+      logAndReturnApiError('deleteManagedAccount', e, response)
+    }
+  }
+)
 
 function logAndReturnApiError(method, e, response) {
   if (!e.response) {
