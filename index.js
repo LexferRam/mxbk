@@ -208,17 +208,22 @@ app.post('/users/:userGuid/members/:memberGuid/identify', async function (reques
 })
 
 // TODO: TRANSACCIONES POR USER/CUENTA
-app.post('/users/:userGuid/account/:accountGuid/transactions', async function (request, response) {
-  try {
-    const listTransactionsResponse = await client.listTransactionsByAccount(
-      request.params.accountGuid,
-      request.params.userGuid
-    )
-    response.json(listTransactionsResponse.data)
-  } catch (e) {
-    logAndReturnApiError('listTransactionsByAccount', e, response)
+app.post(
+  '/users/:userGuid/account/:accountGuid/transactions/:page',
+  async function (request, response) {
+    try {
+      const listTransactionsResponse = await client.listTransactionsByAccount(
+        request.params.accountGuid,
+        request.params.userGuid,
+        request.params.fromDate,
+        request.params.page
+      )
+      response.json(listTransactionsResponse.data)
+    } catch (e) {
+      logAndReturnApiError('listTransactionsByAccount', e, response)
+    }
   }
-})
+)
 
 // TODO: ELIMINAR UNA FI DE UN USUARIO
 app.delete('/users/:userGuid/member/:memberGuid/deletemember', async function (request, response) {
